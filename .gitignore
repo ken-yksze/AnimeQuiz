@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Ignore all database related files
+**/wwwroot/assets/images/Anime*
+**/wwwroot/assets/images/Character*
+**/wwwroot/assets/musics/Anime*

@@ -1,6 +1,6 @@
-using System.Diagnostics;
-using AnimeQuiz.Models;
+using AnimeQuiz.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace AnimeQuiz.Controllers
 {

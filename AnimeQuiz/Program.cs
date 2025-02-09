@@ -1,6 +1,9 @@
 using AnimeQuiz.Data;
+using AnimeQuiz.Interfaces;
+using AnimeQuiz.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,25 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+// Associate service interfaces with their implementations
+builder.Services.AddScoped<IAnimeService, AnimeService>();
+builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<ICharacterVersionService, CharacterVersionService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IMusicService, MusicService>();
+builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<IAnimeQuizService, AnimeQuizService>();
+
+builder.Services.AddControllers().AddJsonOptions(
+    options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    }
+);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -34,6 +56,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllerRoute(
     name: "default",
