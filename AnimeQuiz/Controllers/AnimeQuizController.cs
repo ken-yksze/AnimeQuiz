@@ -1,7 +1,6 @@
 ﻿using AnimeQuiz.Interfaces;
 using AnimeQuiz.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 
 namespace AnimeQuiz.Controllers
@@ -33,7 +32,7 @@ namespace AnimeQuiz.Controllers
         /// GET: api/AnimeQuiz?numOfQuestions=32 -> {AnimeQuizDto}
         /// </example>
         [HttpGet]
-        public async Task<ActionResult<AnimeQuizDto>> GenerateAnimeQuiz([BindRequired, Range(2, 512, ErrorMessage = "Number of questions should be within 2 to 512.")] int numOfQuestions = 8)
+        public async Task<ActionResult<AnimeQuizDto>> GenerateAnimeQuiz([Range(2, 512, ErrorMessage = "Number of questions should be within 2 to 512.")] int numOfQuestions = 8)
         {
             (ServiceResponse response, AnimeQuizDto? animeQuizDto) = await _animeQuizService.GenerateAnimeQuiz(numOfQuestions);
 
