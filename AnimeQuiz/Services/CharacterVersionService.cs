@@ -1,10 +1,10 @@
 ﻿using AnimeQuiz.Data;
 using AnimeQuiz.Interfaces;
 using AnimeQuiz.Models;
-using HeyRed.Mime;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using MimeTypes;
 using System.Text.RegularExpressions;
 
 namespace AnimeQuiz.Services
@@ -181,11 +181,11 @@ namespace AnimeQuiz.Services
                     foreach (IFormFile ImageFile in request.ImageFiles)
                     {
                         string uid = Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "");
-                        string imageFileExtension = MimeTypesMap.GetExtension(ImageFile.ContentType);
+                        string imageFileExtension = MimeTypeMap.GetExtension(ImageFile.ContentType);
 
                         Image image = new()
                         {
-                            ImageFilename = $"Character_{characterVersion.CharacterVersionId}_{uid}.{imageFileExtension}",
+                            ImageFilename = $"Character_{characterVersion.CharacterVersionId}_{uid}{imageFileExtension}",
                             CharacterVersionId = characterVersion.CharacterVersionId
                         };
 

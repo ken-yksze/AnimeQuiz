@@ -1,10 +1,10 @@
 ﻿using AnimeQuiz.Data;
 using AnimeQuiz.Interfaces;
 using AnimeQuiz.Models;
-using HeyRed.Mime;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using MimeTypes;
 using System.Text.RegularExpressions;
 
 namespace AnimeQuiz.Services
@@ -194,11 +194,11 @@ namespace AnimeQuiz.Services
                     foreach (IFormFile ImageFile in request.ImageFiles)
                     {
                         string uid = Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "");
-                        string imageFileExtension = MimeTypesMap.GetExtension(ImageFile.ContentType);
+                        string imageFileExtension = MimeTypeMap.GetExtension(ImageFile.ContentType);
 
                         Image image = new()
                         {
-                            ImageFilename = $"Anime_{anime.AnimeId}_{uid}.{imageFileExtension}",
+                            ImageFilename = $"Anime_{anime.AnimeId}_{uid}{imageFileExtension}",
                             AnimeId = anime.AnimeId
                         };
 
@@ -460,11 +460,11 @@ namespace AnimeQuiz.Services
                     foreach (IFormFile ImageFile in request.ImageFiles)
                     {
                         string uid = Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "");
-                        string imageFileExtension = MimeTypesMap.GetExtension(ImageFile.ContentType);
+                        string imageFileExtension = MimeTypeMap.GetExtension(ImageFile.ContentType);
 
                         Image image = new()
                         {
-                            ImageFilename = $"Anime_{anime.AnimeId}_{uid}.{imageFileExtension}",
+                            ImageFilename = $"Anime_{anime.AnimeId}_{uid}{imageFileExtension}",
                             AnimeId = anime.AnimeId
                         };
 
@@ -637,12 +637,12 @@ namespace AnimeQuiz.Services
                     for (int i = 0; i < request.MusicFiles.Count; i++)
                     {
                         string uid = Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "");
-                        string musicFileExtension = MimeTypesMap.GetExtension(request.MusicFiles[i].ContentType);
+                        string musicFileExtension = MimeTypeMap.GetExtension(request.MusicFiles[i].ContentType);
 
                         Music music = new()
                         {
                             MusicName = request.MusicNames[i],
-                            MusicFilename = $"Anime_{anime.AnimeId}_{uid}.{musicFileExtension}",
+                            MusicFilename = $"Anime_{anime.AnimeId}_{uid}{musicFileExtension}",
                             AnimeId = anime.AnimeId
                         };
 
