@@ -50,7 +50,7 @@ namespace AnimeQuiz.Controllers
 
             return (response.Status == ServiceStatus.Created && staffDto != null)
                 ? RedirectToAction("Details", "StaffPage", new { id = staffDto.StaffId })
-                : PartialView("Error", new ErrorViewModel() { Errors = response.Messages });
+                : View("Error", new ErrorViewModel() { Errors = response.Messages });
         }
 
         // GET: Staff/{id}/Edit

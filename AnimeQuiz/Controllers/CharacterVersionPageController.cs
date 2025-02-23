@@ -103,7 +103,7 @@ namespace AnimeQuiz.Controllers
 
             return response.Status == ServiceStatus.Created
                 ? RedirectToAction("Details", "CharacterVersionPage", new { id = id })
-                : PartialView("Error", new ErrorViewModel() { Errors = response.Messages });
+                : View("Error", new ErrorViewModel() { Errors = response.Messages });
         }
 
         // POST: CharacterVersion/{id}/RemoveVoiceActors

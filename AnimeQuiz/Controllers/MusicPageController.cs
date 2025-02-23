@@ -47,7 +47,7 @@ namespace AnimeQuiz.Controllers
 
             return response.Status == ServiceStatus.Created
                 ? RedirectToAction("Details", "MusicPage", new { id = id })
-                : PartialView("Error", new ErrorViewModel() { Errors = response.Messages });
+                : View("Error", new ErrorViewModel() { Errors = response.Messages });
         }
 
         // POST: Music/{id}/RemoveSingers
