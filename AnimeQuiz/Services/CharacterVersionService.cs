@@ -56,6 +56,7 @@ namespace AnimeQuiz.Services
                 .Include(cv => cv.Character)
                 .Include(cv => cv.Images)
                 .Include(cv => cv.Animes)
+                    !.ThenInclude(a => a.Images)
                 .Include(cv => cv.VoiceActors)
                 .SingleOrDefaultAsync(c => c.CharacterVersionId == id);
 
