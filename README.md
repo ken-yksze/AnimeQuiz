@@ -11,7 +11,7 @@ It allows admin to manage content of an Anime Database, and then generate Anime 
 
 ## Features
 
-### CRUD for Anime Database
+- CRUD for Anime Database
     - Create Anime, attach Images, Musics, and Characters to Anime
     - Create Character, attach Versions for the Character
     - Create Character Version, attach Images and Voice Actors to the Version
@@ -25,14 +25,14 @@ It allows admin to manage content of an Anime Database, and then generate Anime 
     - Delete link of Anime to Character, Anime to Image, Anime to Music, and Music to Singer
     - Delete link of Character to Version, Version to Image, Version to Voice Actor
     
-### Anime Quiz
+- Anime Quiz
     - Generate questions for quiz
     - Able to randomly generate questions of different types (e.g. Image or Music question)
     - The answer types differ from question to question too, let say for Music question it can ask about the Name or the Singer
     - The order of questions and choices are randomly shuffled
     - There is a 50/50 tool of limited chances which can help you to eliminate 2 incorrect answers
     
-### Dropzone for file uploading
+- Dropzone for file uploading
     - Multiple files can be uploaded by drag & drop or click
     - There is a preview for each Image you uploaded
     - There is a audio player for each Music you uploaded
