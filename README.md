@@ -56,7 +56,7 @@ It allows admin to manage content of an Anime Database, and then generate Anime 
 - Data: For data schema & migration
 - Views: For rendering content
 
-## API
+## APIs
 
 ### Anime
     - GET: /api/Anime ; Listing Animes
