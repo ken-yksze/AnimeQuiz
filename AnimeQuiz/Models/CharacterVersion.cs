@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,6 +36,7 @@ namespace AnimeQuiz.Models
 
         public CharacterDto? CharacterDto { get; set; }
 
+        [DisplayName("Version Name")]
         public string? VersionName { get; set; }
 
         public List<AnimeDto>? AnimeDtos { get; set; }
@@ -46,22 +48,22 @@ namespace AnimeQuiz.Models
 
     public class AddImagesToCharacterVersionRequest
     {
-        public required List<IFormFile> ImageFiles { get; set; }
+        public required List<IFormFile> ImageFiles { get; set; } = [];
     }
 
     public class RemoveImagesFromCharacterVersionRequest
     {
-        public required List<int> ImageIds { get; set; }
+        public required List<int> ImageIds { get; set; } = [];
     }
 
     public class AddVoiceActorsToCharacterVersionRequest
     {
-        public required List<int> VoiceActorIds { get; set; }
+        public required List<int> VoiceActorIds { get; set; } = [];
     }
 
     public class RemoveVoiceActorsFromCharacterVersionRequest
     {
-        public required List<int> VoiceActorIds { get; set; }
+        public required List<int> VoiceActorIds { get; set; } = [];
     }
 
     public class UpdateCharacterVersionRequest

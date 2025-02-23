@@ -36,7 +36,19 @@ namespace AnimeQuiz.Services
             };
         }
 
-        public static readonly List<string> ValidContentTypes = ["audio/mpeg", "audio/mp4", "audio/wav", "audio/flac"];
+        public static readonly List<string> ValidContentTypes = ["audio/mpeg", "audio/mp4", "audio/x-m4a", "audio/wav", "audio/flac"];
+
+        public async Task<MusicDto?> FindMusic(int id)
+        {
+            // Get a Music by id
+            Music? music = await _context.Musics
+                .Include(m => m.Singers)
+                .SingleOrDefaultAsync(a => a.MusicId == id);
+
+            // Convert to Dto
+            MusicDto? musicDto = music == null ? null : ToMusicDto(music);
+            return musicDto;
+        }
 
         public async Task<ServiceResponse> AddSingersToMusic(int id, AddSingersToMusicRequest request)
         {
@@ -138,6 +150,19 @@ namespace AnimeQuiz.Services
             response.Status = ServiceStatus.Deleted;
             response.Messages.Add($"{affectedRecordsNumber} records are affected.");
             return response;
+        }
+
+        public async Task<IEnumerable<StaffDto>> FindAvailableSingersForMusic(int id)
+        {
+            // Filter available singers if this music don't have such singer
+            List<Staff> staffs = await _context.Staffs
+                .Include(s => s.SungMusics)
+                .Where(s => !s.SungMusics!.Any(m => m.MusicId == id))
+                .ToListAsync();
+
+            // Convert to Dtos
+            IEnumerable<StaffDto> staffDtos = staffs.Select(StaffService.ToStaffDto);
+            return staffDtos;
         }
     }
 }

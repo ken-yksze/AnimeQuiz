@@ -62,10 +62,26 @@ namespace AnimeQuiz.Services
         {
             // Get an Anime with CharacterVersions, Images, and Musics by id
             Anime? anime = await _context.Animes
-                .Include(a => a.CharacterVersions)
-                    !.ThenInclude(cv => cv.Character)
-                .Include(a => a.Images)
-                .Include(a => a.Musics)
+                .Select(a => new Anime
+                {
+                    AnimeId = a.AnimeId,
+                    AnimeName = a.AnimeName,
+                    Images = a.Images,
+                    Musics = a.Musics,
+                    CharacterVersions = a.CharacterVersions
+                        !.Select(cv => new CharacterVersion
+                        {
+                            CharacterVersionId = cv.CharacterVersionId,
+                            CharacterId = cv.CharacterId,
+                            Character = cv.Character,
+                            VersionName = cv.VersionName,
+                            Images = cv.Images
+                                !.OrderBy(i => i.ImageId)
+                                .Take(1)
+                                .ToList()
+                        })
+                        .ToList()
+                })
                 .SingleOrDefaultAsync(a => a.AnimeId == id);
 
             // Convert to Dto
@@ -744,6 +760,30 @@ namespace AnimeQuiz.Services
             response.Status = ServiceStatus.Deleted;
             response.Messages.Add($"{affectedRecordsNumber} records are affected.");
             return response;
+        }
+
+        public async Task<IEnumerable<CharacterVersionDto>> FindAvailableCharactersForAnime(int id)
+        {
+            // Filter available characters if this anime don't have such character
+            List<CharacterVersion> characterVersions = await _context.CharacterVersions
+                .Select(cv => new CharacterVersion
+                {
+                    CharacterVersionId = cv.CharacterVersionId,
+                    VersionName = cv.VersionName,
+                    CharacterId = cv.CharacterId,
+                    Character = cv.Character,
+                    Animes = cv.Animes,
+                    Images = cv.Images
+                        !.OrderBy(i => i.ImageId)
+                        .Take(1)
+                        .ToList()
+                })
+                .Where(cv => !cv.Animes!.Any(a => a.AnimeId == id))
+                .ToListAsync();
+
+            // Convert to Dtos
+            IEnumerable<CharacterVersionDto> characterVersionDtos = characterVersions.Select(CharacterVersionService.ToCharacterVersionDto);
+            return characterVersionDtos;
         }
     }
 }

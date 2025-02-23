@@ -30,6 +30,17 @@ namespace AnimeQuiz.Services
         public enum CharacterImageQuestionType { CharacterName, VoiceActorName }
         public enum AnimeMusicQuestionType { MusicName, SingerName }
 
+        public async Task<int> GetTotalAvailable()
+        {
+            // Get the number of available questions in db per type and total available
+            int numOfAnimeImages = await _context.Images.Where(i => i.AnimeId != null).CountAsync();
+            int numOfCharacterImages = await _context.Images.Where(i => i.CharacterVersionId != null).CountAsync();
+            int numOfAnimeMusics = await _context.Musics.CountAsync();
+            int totalAvailable = numOfAnimeImages + numOfCharacterImages + numOfAnimeMusics;
+
+            return totalAvailable;
+        }
+
         public async Task<(ServiceResponse, AnimeQuizDto?)> GenerateAnimeQuiz(int numOfQuestions)
         {
             ServiceResponse response = new();
@@ -37,6 +48,13 @@ namespace AnimeQuiz.Services
 
             try
             {
+                if (numOfQuestions < 2 || numOfQuestions > 512)
+                {
+                    response.Status = ServiceStatus.BadRequest;
+                    response.Messages.Add("Number of questions should be within 2 to 512.");
+                    return (response, null);
+                }
+
                 // Get the number of available questions in db per type and total available
                 int numOfAnimeImages = await _context.Images.Where(i => i.AnimeId != null).CountAsync();
                 int numOfCharacterImages = await _context.Images.Where(i => i.CharacterVersionId != null).CountAsync();
@@ -300,6 +318,12 @@ namespace AnimeQuiz.Services
                         default:
                             break;
                     }
+                }
+
+                // Randomly shuffle the answers
+                foreach (Question question in animeQuizDto.Questions)
+                {
+                    _random.Shuffle<string>(CollectionsMarshal.AsSpan(question.Choices));
                 }
 
                 // Randomly shuffle the questions

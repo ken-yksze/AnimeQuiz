@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace AnimeQuiz.Models
 {
@@ -17,6 +18,7 @@ namespace AnimeQuiz.Models
     {
         public int CharacterId { get; set; }
 
+        [DisplayName("Character Name")]
         public required string CharacterName { get; set; }
 
         public List<CharacterVersionDto>? CharacterVersionDtos { get; set; }
@@ -31,18 +33,18 @@ namespace AnimeQuiz.Models
     {
         public required string CharacterName { get; set; }
 
-        public required List<IFormFile> ImageFiles { get; set; }
+        public required List<IFormFile> ImageFiles { get; set; } = [];
     }
 
     public class AddVersionToCharacterRequest
     {
         public required string VersionName { get; set; }
 
-        public required List<IFormFile> ImageFiles { get; set; }
+        public required List<IFormFile> ImageFiles { get; set; } = [];
     }
 
     public class RemoveVersionsFromCharacterRequest
     {
-        public required List<int> CharacterVersionIds { get; set; }
+        public required List<int> CharacterVersionIds { get; set; } = [];
     }
 }

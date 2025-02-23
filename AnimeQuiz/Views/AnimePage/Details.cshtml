@@ -1,0 +1,146 @@
+﻿@model AnimeQuiz.Models.AnimeDto
+
+@{
+    ViewData["Title"] = Model.AnimeName;
+}
+
+<div class="d-flex justify-content-between align-items-center">
+    <h1>@ViewData["Title"]</h1>
+    <div class="d-flex align-items-center gap-5">
+        <a class="text-decoration-none text-danger" asp-controller="AnimePage" asp-action="ConfirmDelete" asp-route-id="@Model.AnimeId">
+            <h2>
+                Delete
+            </h2>
+        </a>
+        <a class="text-decoration-none" asp-controller="AnimePage" asp-action="Edit" asp-route-id="@Model.AnimeId">
+            <h2>
+                Edit
+            </h2>
+        </a>
+        <a class="text-decoration-none" href="javascript:history.back()">
+            <h2>
+                Back
+            </h2>
+        </a>
+    </div>
+</div>
+
+<hr />
+
+<dl class="row fs-4">
+    <div>
+        <dt class="mb-2 d-flex justify-content-between align-items-center">
+            Images:
+            <a class="text-decoration-none" asp-controller="AnimePage" asp-action="NewImages" asp-route-id="@Model.AnimeId">
+                New Images
+            </a>
+        </dt>
+        <dd class="row">
+            @for (int i = 0; i < (Model.ImageDtos?.Count() ?? 0); i++)
+            {
+                AnimeQuiz.Models.ImageDto imageDto = Model.ImageDtos!.ElementAt(i);
+
+                if (i != 0 && i % 4 == 0)
+                {
+                    <hr class="mt-4" />
+                }
+
+                <div class="col-3">
+                    <div class="position-relative">
+                        <img class="w-100 shadow p-2 bg-white" src="@imageDto.ImagePath" alt="Image @imageDto.ImageId" />
+                        <form class="position-absolute border border-2 border-danger bg-white fs-6 p-1" style="right: 1em; bottom: 1em;" method="POST" asp-asp-controller="AnimePage" asp-action="RemoveImages" asp-route-id=@Model.AnimeId>
+                            <input style="display:none" name="ImageIds" value="@imageDto.ImageId" />
+                            <button type="submit" class="btn btn-close"></button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (Model.ImageDtos == null || Model.ImageDtos.Count() == 0)
+            {
+                <p>No Image</p>
+            }
+        </dd>
+        <dt class="mt-2 pt-2 mb-2 border-top border-top-1 d-flex justify-content-between align-items-center">
+            Musics:
+            <a class="text-decoration-none" asp-controller="AnimePage" asp-action="NewMusics" asp-route-id="@Model.AnimeId">
+                New Musics
+            </a>
+        </dt>
+        <dd class="row">
+            @for (int i = 0; i < (Model.MusicDtos?.Count() ?? 0); i++)
+            {
+                AnimeQuiz.Models.MusicDto musicDto = Model.MusicDtos!.ElementAt(i);
+
+                if (i != 0 && i % 4 == 0)
+                {
+                    <hr class="mt-4" />
+                }
+
+                <div class="col-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <a class="fs-5 text-decoration-none" asp-controller="MusicPage" asp-action="Details" asp-route-id="@musicDto.MusicId">@musicDto.MusicName</a>
+                        <form class="border border-2 border-danger bg-white fs-6 p-1" style="right: 1em; bottom: 1em;" method="POST" action="/Anime/@Model.AnimeId/RemoveMusics">
+                            <input style="display:none" name="MusicIds" value="@musicDto.MusicId" />
+                            <button type="submit" class="btn btn-close"></button>
+                        </form>
+                    </div>
+                    <audio class="mt-2 w-100" src="@musicDto.MusicPath" controls>
+                        Your browser does not support the audio tag.
+                    </audio>
+                </div>
+            }
+
+            @if (Model.MusicDtos == null || Model.MusicDtos.Count() == 0)
+            {
+                <p>No Music</p>
+            }
+        </dd>
+        <dt class="mt-2 pt-2 mb-2 border-top border-top-1 d-flex justify-content-between align-items-center">
+            Characters:
+            <a class="text-decoration-none" asp-controller="AnimePage" asp-action="NewCharacters" asp-route-id="@Model.AnimeId">
+                New Characters
+            </a>
+        </dt>
+        <dd class="row">
+            @for (int i = 0; i < (Model.CharacterVersionDtos?.Count() ?? 0); i++)
+            {
+                AnimeQuiz.Models.CharacterVersionDto characterVersionDto = Model.CharacterVersionDtos!.ElementAt(i);
+
+                if (i != 0 && i % 4 == 0)
+                {
+                    <hr class="mt-4" />
+                }
+
+                <div class="col-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <a class="fs-5 text-decoration-none" asp-controller="CharacterVersionPage" asp-action="Details" asp-route-id="@characterVersionDto.CharacterVersionId">
+                            @if (characterVersionDto.VersionName == null)
+                            {
+                                <text>@characterVersionDto.CharacterDto!.CharacterName</text>
+                            }
+                            else
+                            {
+                                <text>@characterVersionDto.CharacterDto!.CharacterName: @characterVersionDto.VersionName</text>
+                            }
+                        </a>
+                        <form class="border border-2 border-danger bg-white fs-6 p-1" style="right: 1em; bottom: 1em;" method="POST" asp-asp-controller="AnimePage" asp-action="RemoveCharacters" asp-route-id=@Model.AnimeId>
+                            <input style="display:none" name="CharacterVersionIds" value="@characterVersionDto.CharacterVersionId" />
+                            <button type="submit" class="btn btn-close"></button>
+                        </form>
+                    </div>
+
+                    @if (characterVersionDto.ImageDtos != null && characterVersionDto.ImageDtos.Count() > 0)
+                    {
+                        <img class="mt-2 w-100 shadow p-2 bg-white" src="@characterVersionDto.ImageDtos[0].ImagePath" alt="Image @characterVersionDto.ImageDtos[0].ImageId" />
+                    }
+                </div>
+            }
+
+            @if (Model.CharacterVersionDtos == null || Model.CharacterVersionDtos.Count() == 0)
+            {
+                <p>No Characters</p>
+            }
+        </dd>
+    </div>
+</dl>

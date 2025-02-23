@@ -49,9 +49,25 @@ namespace AnimeQuiz.Services
         {
             // Get a Staff with CharacterVersions and Musics by id
             Staff? staff = await _context.Staffs
-                .Include(s => s.VoiceActedCharacterVersions)
-                    !.ThenInclude(vacv => vacv.Character)
-                .Include(s => s.SungMusics)
+                .Select(s => new Staff
+                {
+                    StaffId = s.StaffId,
+                    StaffName = s.StaffName,
+                    SungMusics = s.SungMusics,
+                    VoiceActedCharacterVersions = s.VoiceActedCharacterVersions
+                        !.Select(vacv => new CharacterVersion
+                        {
+                            CharacterVersionId = vacv.CharacterVersionId,
+                            CharacterId = vacv.CharacterId,
+                            Character = vacv.Character,
+                            VersionName = vacv.VersionName,
+                            Images = vacv.Images
+                                !.OrderBy(i => i.ImageId)
+                                .Take(1)
+                                .ToList()
+                        })
+                        .ToList()
+                })
                 .SingleOrDefaultAsync(a => a.StaffId == id);
 
             // Convert to Dto

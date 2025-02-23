@@ -1,3 +1,4 @@
+using AnimeQuiz.Interfaces;
 using AnimeQuiz.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -7,15 +8,18 @@ namespace AnimeQuiz.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IAnimeQuizService _animeQuizService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IAnimeQuizService animeQuizService)
         {
             _logger = logger;
+            _animeQuizService = animeQuizService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            int totalAvailable = await _animeQuizService.GetTotalAvailable();
+            return View(totalAvailable);
         }
 
         public IActionResult Privacy()

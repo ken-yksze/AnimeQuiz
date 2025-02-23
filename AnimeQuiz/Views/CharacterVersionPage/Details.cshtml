@@ -1,0 +1,85 @@
+﻿@model AnimeQuiz.Models.CharacterVersionDto
+
+@{
+    ViewData["Title"] = $"{Model.CharacterDto!.CharacterName}: {Model.VersionName ?? "Default"}";
+}
+
+<div class="d-flex justify-content-between align-items-center">
+    <h1>@ViewData["Title"]</h1>
+    <div class="d-flex align-items-center gap-5">
+        <a class="text-decoration-none" asp-controller="CharacterVersionPage" asp-action="Edit" asp-route-id="@Model.CharacterVersionId">
+            <h2>
+                Edit
+            </h2>
+        </a>
+        <a class="text-decoration-none" href="javascript:history.back()">
+            <h2>
+                Back
+            </h2>
+        </a>
+    </div>
+</div>
+
+<hr />
+
+<dl class="row fs-4">
+    <div>
+        <dt class="mb-2 d-flex justify-content-between align-items-center">
+            Images:
+            <a class="text-decoration-none" asp-controller="CharacterVersionPage" asp-action="NewImages" asp-route-id="@Model.CharacterVersionId">
+                New Images
+            </a>
+        </dt>
+        <dd class="row">
+            @for (int i = 0; i < (Model.ImageDtos?.Count() ?? 0); i++)
+            {
+                AnimeQuiz.Models.ImageDto imageDto = Model.ImageDtos!.ElementAt(i);
+
+                if (i != 0 && i % 4 == 0)
+                {
+                    <hr class="mt-4" />
+                }
+
+                <div class="col-3">
+                    <div class="position-relative">
+                        <img class="w-100 shadow p-2 bg-white" src="@imageDto.ImagePath" alt="Image @imageDto.ImageId" />
+                        <form class="position-absolute border border-2 border-danger bg-white fs-6 p-1" style="right: 1em; bottom: 1em;" method="POST" asp-asp-controller="CharacterVersionPage" asp-action="RemoveImages" asp-route-id=@Model.CharacterVersionId>
+                            <input style="display:none" name="ImageIds" value="@imageDto.ImageId" />
+                            <button type="submit" class="btn btn-close"></button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (Model.ImageDtos == null || Model.ImageDtos.Count() == 0)
+            {
+                <p>No Image</p>
+            }
+        </dd>
+        <dt class="mt-4 pt-3 mb-2 border-top border-top-1 d-flex justify-content-between align-items-center">
+            Voice Actors:
+            <a class="text-decoration-none" asp-controller="CharacterVersionPage" asp-action="NewVoiceActors" asp-route-id="@Model.CharacterVersionId">
+                New Voice Actors
+            </a>
+        </dt>
+        <dd class="row">
+            @foreach (StaffDto staffDto in Model.VoiceActorDtos ?? [])
+            {
+                <div class="d-flex justify-content-between align-items-center">
+                    <a class="text-decoration-none" asp-controller="StaffPage" asp-action="Details" asp-route-id="@staffDto.StaffId">
+                        <h3 class="m-0 p-0">@staffDto.StaffName</h3>
+                    </a>
+                    <form class="border border-2 border-danger bg-white fs-6 p-1" style="right: 1em; bottom: 1em;" method="POST" asp-controller="CharacterVersionPage" asp-action="RemoveVoiceActors" asp-route-id="@Model.CharacterVersionId">
+                        <input style="display:none" name="VoiceActorIds" value="@staffDto.StaffId" />
+                        <button type="submit" class="btn btn-close"></button>
+                    </form>
+                </div>
+            }
+
+            @if (Model.VoiceActorDtos == null || Model.VoiceActorDtos.Count() == 0)
+            {
+                <p>No Voice Actor</p>
+            }
+        </dd>
+    </div>
+</dl>

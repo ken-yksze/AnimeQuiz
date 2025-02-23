@@ -1,8 +1,27 @@
-﻿@{
+﻿@model Int32;
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1 class="display-4 text-center">Welcome</h1>
+
+<form class="flex-grow-1 d-flex flex-column justify-content-center align-items-center gap-2" method="GET" asp-controller="AnimeQuizPage" asp-action="Index">
+    <div class="form-group">
+        <label class="form-label" for="numOfQuestions">Number of Questions</label>
+        <select class="form-select" name="numOfQuestions" id="numOfQuestions">
+            @for (int x = 1; x <= 9; x++)
+            {
+                int value = (int)Math.Pow(2, x);
+                bool isLast = 2 * value > Model;
+                <option value="@value" selected="@(isLast ? "selected" : null)">@value</option>
+                if (isLast) break;
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-lg">
+            Start Quiz
+        </button>
+    </div>
+</form>

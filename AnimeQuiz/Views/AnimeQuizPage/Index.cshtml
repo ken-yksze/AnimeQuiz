@@ -1,0 +1,196 @@
+﻿@model AnimeQuiz.Models.AnimeQuizDto
+
+@{
+    ViewData["Title"] = $"Anime Quiz {Context.Request.Query["numOfQuestions"]}";
+}
+
+<h1>
+    Anime Quiz #
+    <span id="current-question-number">1</span>
+    /
+    <span id="total-question-number">@Model.Questions.Count</span>
+</h1>
+
+<div class="flex-grow-1 d-flex flex-column d-none" id="quiz">
+    <div class="row m-0 align-items-center">
+        <div class="col-2 d-flex align-items-center flex-nowrap gap-1">
+            <button type="button" class="btn btn-secondary text-nowrap" id="5050-helper">
+                <sup>50</sup>
+                /
+                <sub>50</sub>
+            </button>
+            <h4 class="m-0 p-0 text-nowrap">× <span id="5050-chances">1</span></h4>
+        </div>
+        <h2 class="col-8 m-0 py-2 text-center text-truncate" id="question-title">
+            Question
+        </h2>
+        <h3 class="col-2 m-0 p-0 text-end text-nowrap">
+            Score:
+            <span id="quiz-score">0</span>
+        </h3>
+    </div>
+    <div class="row mx-0 my-4 flex-grow-1 justify-content-center">
+        <div class="col-4 align-content-center">
+            <img class="w-100 shadow p-2 bg-white d-none" src="" alt="Question Image" id="question-image" />
+            <audio class="w-100 d-none" src="" controls loop id="question-music">
+                Your browser does not support the audio tag.
+            </audio>
+        </div>
+    </div>
+    <div class="row m-0 justify-content-center gx-5 gy-4">
+        <div class="col-4">
+            <button type="button" class="answers btn btn-primary btn-lg w-100 fs-6 text-truncate" disabled>Answer 1</button>
+        </div>
+        <div class="col-4">
+            <button type="button" class="answers btn btn-primary btn-lg w-100 fs-6 text-truncate" disabled>Answer 2</button>
+        </div>
+    </div>
+    <div class="row m-0 justify-content-center gx-5 gy-4">
+        <div class="col-4">
+            <button type="button" class="answers btn btn-primary btn-lg w-100 fs-6 text-truncate" disabled>Answer 3</button>
+        </div>
+        <div class="col-4">
+            <button type="button" class="answers btn btn-primary btn-lg w-100 fs-6 text-truncate" disabled>Answer 4</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const randomSelection = (originalArr, n) => {
+            let newArr = [];
+
+            if (n >= originalArr.length) {
+                return originalArr;
+            }
+
+            for (let i = 0; i < n; i++) {
+                let newElem = originalArr[Math.floor(Math.random() * originalArr.length)];
+
+                while (newArr.includes(newElem)) {
+                    newElem = originalArr[Math.floor(Math.random() * originalArr.length)];
+                }
+
+                newArr.push(newElem);
+            }
+
+            return newArr;
+        }
+
+        const pageReady = () => {
+            const questions = JSON.parse('@Json.Serialize(Model.Questions)'); // wrap one more JSON.parse to prevent expected JS expression warning
+            let currentQuestionIndex = 0;
+            let _5050Chances = Math.ceil(questions.length / 16); // once per 16 questions
+            let quizScore = 0;
+            let handlingAnswer = false;
+
+            $("#5050-chances").text(_5050Chances);
+
+            const loadQuestion = (questionIndex) => {
+                if (questionIndex < 0 || questionIndex > (questions.length - 1)) return;
+
+                const question = questions[questionIndex];
+
+                if (_5050Chances > 0) {
+                    $("#5050-helper").prop("disabled", false);
+                }
+
+                $("#question-image").addClass("d-none");
+                $("#question-music").addClass("d-none");
+                $("#question-image").prop("src", "");
+                $("#question-music").trigger("pause");
+                $("#question-music").prop("src", "");
+                $("#question-music").prop("currentTime", 0);
+                $("#current-question-number").text(questionIndex + 1);
+                $("#question-title").text(question.questionTitle);
+
+                if (question.imagePath !== null)
+                {
+                    $("#question-image").prop("src", question.imagePath);
+                    $("#question-image").removeClass("d-none");
+                }
+
+                if (question.musicPath !== null)
+                {
+                    $("#question-music").prop("src", question.musicPath);
+                    $("#question-music").removeClass("d-none");
+
+                    if (questionIndex != 0) {
+                        $("#question-music").trigger("play");
+                    }
+                }
+
+                $(".answers").each(function (i) {
+                    $(this).html(i in question.choices ? question.choices[i].replace(", ", "<br>") : "");
+                    $(this).attr("isanswer", i in question.choices ? (question.choices[i] === question.answer) : false);
+                    $(this).prop("disabled", !(i in question.choices));
+                });
+            }
+
+            $(".answers").each(function () {
+                $(this).click(function () {
+                    if (handlingAnswer) return;
+
+                    handlingAnswer = true;
+                    let correctAnswerElem = null;
+                    const currentCorrect = $(this).attr("isanswer") === "true";
+
+                    if (currentCorrect)
+                    {
+                        quizScore++;
+                        $("#quiz-score").text(quizScore);
+                        correctAnswerElem = $(this);
+                    }
+                    else
+                    {
+                        $(this).addClass("incorrect");
+                        correctAnswerElem = $('.answers[isanswer="true"]');
+                    }
+
+                    correctAnswerElem.addClass("correct");
+
+                    setTimeout(() => {
+                        $(this).blur();
+
+                        if (!currentCorrect)
+                        {
+                            $(this).removeClass("incorrect");
+                        }
+
+                        correctAnswerElem.removeClass("correct");
+
+                        if (currentQuestionIndex < (questions.length - 1))
+                        {
+                            currentQuestionIndex++;
+                            loadQuestion(currentQuestionIndex);
+                        }
+                        else
+                        {
+                            window.location.replace(`AnimeQuiz/Result?score=${quizScore}&total=${questions.length}`);
+                        }
+
+                        handlingAnswer = false;
+                    }, 1200);
+                });
+            });
+
+            $("#5050-helper").click(
+                function () {
+                    this.disabled = true;
+                    _5050Chances--;
+                    $("#5050-chances").text(_5050Chances);
+
+                    const incorrectAnswers = $('.answers[isanswer="false"]')
+                    const answersToEliminate = randomSelection(incorrectAnswers, 2);
+
+                    answersToEliminate.forEach((answerToEliminate) => answerToEliminate.disabled = "true");
+                }
+            )
+
+            loadQuestion(currentQuestionIndex);
+            $("#quiz").removeClass("d-none");
+        }
+
+        $(window).on("load", pageReady);
+    </script>
+}

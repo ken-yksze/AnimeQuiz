@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace AnimeQuiz.Models
@@ -20,6 +21,7 @@ namespace AnimeQuiz.Models
     {
         public int StaffId { get; set; }
 
+        [DisplayName("Staff Name")]
         public required string StaffName { get; set; }
 
         public List<CharacterVersionDto>? VoiceActedCharacterVersionDtos { get; set; }

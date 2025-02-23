@@ -1,0 +1,87 @@
+﻿@model AnimeQuiz.Models.ViewModels.AnimeAvailableCharacter
+
+@{
+    ViewData["Title"] = $"New Characters for {Model.AnimeDto.AnimeName}";
+}
+
+<div class="d-flex justify-content-between align-items-center">
+    <h1>@ViewData["Title"]</h1>
+    <a class="text-decoration-none" href="javascript:history.back()">
+        <h2>
+            Back
+        </h2>
+    </a>
+</div>
+
+<hr />
+
+<style>
+    .choice + .choice {
+        border-top: 1px solid black;
+        margin-top: 0.25em;
+        padding-top: 0.25em;
+    }
+</style>
+
+<dl class="row fs-5">
+    <div>
+        <dt class="mb-2 d-flex justify-content-between align-items-center">
+            Available Characters:
+        </dt>
+        <dd>
+            @if (Model.CharacterVersionDtos.Count() != 0)
+            {
+                <form method="POST"
+                      asp-controller="AnimePage"
+                      asp-action="AddCharacters"
+                      asp-route-id="@Model.AnimeDto.AnimeId"
+                      class="mt-3 flex-grow-1 d-flex flex-column gap-3"
+                      id="add-character-form">
+
+                    <div class="row">
+                        @for (int i = 0; i < Model.CharacterVersionDtos.Count(); i++)
+                        {
+                            CharacterVersionDto characterVersionDto = Model.CharacterVersionDtos.ElementAt(i);
+
+                            if (i != 0 && (i % 4) == 0)
+                            {
+                                <div class="border-top border-top-1 my-3"></div>
+                            }
+
+                            <div class="col-3">
+                                <div class="d-flex align-items-center">
+                                    <input class="form-check-input" type="checkbox" name="CharacterVersionIds" id="@characterVersionDto.CharacterVersionId" value="@characterVersionDto.CharacterVersionId" />
+                                    <label class="form-check-label ms-2" for="@characterVersionDto.CharacterVersionId">
+                                        @if (characterVersionDto.VersionName == null)
+                                        {
+                                            <text>@characterVersionDto.CharacterDto!.CharacterName</text>
+                                        }
+                                        else
+                                        {
+                                            <text>@characterVersionDto.CharacterDto!.CharacterName: @characterVersionDto.VersionName</text>
+                                        }
+                                    </label>
+                                </div>
+
+                                @if (characterVersionDto.ImageDtos != null && characterVersionDto.ImageDtos.Count() > 0)
+                                {
+                                    <img class="mt-2 w-100 shadow p-2 bg-white" src="@characterVersionDto.ImageDtos[0].ImagePath" alt="Image @characterVersionDto.ImageDtos[0].ImageId" />
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3">
+                        <button type="submit" class="btn btn-primary btn-lg" id="add-button">
+                            Add
+                        </button>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <p>No Available Character</p>
+            }
+        </dd>
+    </div>
+</dl>

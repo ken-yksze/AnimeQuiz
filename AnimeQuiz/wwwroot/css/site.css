@@ -1,22 +1,78 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+
+@keyframes correct-blink {
+    0%, 49% {
+        background-color: inherit;
+        color: #32d296;
+    }
+
+    50%, 100% {
+        background-color: #32d296;
+        color: white;
+    }
+}
+
+.correct {
+    background-color: inherit;
+    color: #32d296;
+    animation: correct-blink 300ms 3 forwards;
+}
+
+@keyframes incorrect-blink {
+    0%, 49% {
+        background-color: inherit;
+        color: #f0506e;
+    }
+
+    50%, 100% {
+        background-color: #f0506e;
+        color: white;
+    }
+}
+
+.incorrect {
+    background-color: inherit;
+    color: #f0506e;
+    animation: incorrect-blink 300ms 3 forwards;
+}
+
+.dz-progress, .dz-error-message, .dz-success-mark, .dz-error-mark {
+    display: none !important;
+}
+
+.dz-disabled {
+    pointer-events: none;
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+}
+
+.dz-size, .dz-filename {
+    margin-bottom: 0.5em !important;
+}
+
+.dz-name-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

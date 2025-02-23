@@ -49,11 +49,11 @@ namespace AnimeQuiz.Models
 
     public class AddSingersToMusicRequest
     {
-        public required List<int> SingerIds { get; set; }
+        public required List<int> SingerIds { get; set; } = [];
     }
 
     public class RemoveSingersFromMusicRequest
     {
-        public required List<int> SingerIds { get; set; }
+        public required List<int> SingerIds { get; set; } = [];
     }
 }

@@ -1,0 +1,43 @@
+﻿@model IEnumerable<AnimeQuiz.Models.CharacterDto>
+
+@{
+    ViewData["Title"] = "Characters";
+}
+
+<div class="d-flex justify-content-between align-items-center">
+    <h1>@ViewData["Title"]</h1>
+    <a class="text-decoration-none" asp-controller="CharacterPage" asp-action="New">
+        <h2>
+            Create New
+        </h2>
+    </a>
+</div>
+
+<hr />
+
+<div class="row">
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        CharacterDto characterDto = Model.ElementAt(i);
+
+        if (i != 0 && i % 4 == 0)
+        {
+            <hr class="mt-4" />
+        }
+
+        <div class="col-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <a class="text-decoration-none" asp-controller="CharacterPage" asp-action="Details" asp-route-id="@characterDto.CharacterId">
+                    <h3>@characterDto.CharacterName</h3>
+                </a>
+                <form class="border border-2 border-danger bg-white fs-6 p-1" style="right: 1em; bottom: 1em;" method="POST" asp-controller="CharacterPage" asp-action="Delete" asp-route-id="@characterDto.CharacterId">
+                    <button type="submit" class="btn btn-close"></button>
+                </form>
+            </div>
+            @if (characterDto.CharacterVersionDtos?.FirstOrDefault()?.ImageDtos?.FirstOrDefault() != null)
+            {
+                <img class="mt-2 w-100 shadow p-2 bg-white" src="@characterDto.CharacterVersionDtos![0].ImageDtos![0].ImagePath" alt="@characterDto.CharacterName" />
+            }
+        </div>
+    }
+</div>

@@ -27,5 +27,7 @@ namespace AnimeQuiz.Interfaces
         Task<ServiceResponse> AddMusicsToAnime(int id, AddMusicsToAnimeRequest request);
 
         Task<ServiceResponse> RemoveMusicsFromAnime(int id, RemoveMusicsFromAnimeRequest request);
+
+        Task<IEnumerable<CharacterVersionDto>> FindAvailableCharactersForAnime(int id);
     }
 }

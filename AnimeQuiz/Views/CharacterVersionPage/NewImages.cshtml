@@ -1,0 +1,112 @@
+﻿@model AnimeQuiz.Models.CharacterVersionDto
+
+@{
+    ViewData["Title"] = $"New Images for {Model.CharacterDto!.CharacterName}: {Model.VersionName ?? "Default"}";
+}
+
+<div class="d-flex justify-content-between align-items-center">
+    <h1>@ViewData["Title"]</h1>
+    <a class="text-decoration-none" href="javascript:history.back()">
+        <h2>
+            Back
+        </h2>
+    </a>
+</div>
+
+<hr />
+
+<form method="POST"
+      asp-controller="CharacterVersionPage"
+      asp-action="AddImages"
+      asp-route-id="@Model.CharacterVersionId"
+      enctype="multipart/form-data"
+      class="mt-3 flex-grow-1 d-flex flex-column gap-3"
+      id="image-upload-form">
+    <div class="dropzone flex-grow-1 align-content-center" id="image-dropzone">
+        <div class="dz-message needsclick">
+            <h3>Drop image files here or click to upload</h3>
+            <span class="note">Only jpeg/png/gif/webp are allowed</span>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-3">
+        <button type="submit" class="btn btn-primary btn-lg" id="upload-button">
+            Upload
+        </button>
+        <button type="button" class="btn btn-primary btn-lg" id="clear-button">
+            Clear
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <script>
+        // Initialize Dropzone
+        Dropzone.autoDiscover = false;
+
+        const pageReady = () => {
+            const imageDropzoneElem = new Dropzone("#image-dropzone", {
+                url: "/CharacterVersion/@Model.CharacterVersionId/AddImages",
+                paramName: () => "ImageFiles",
+                autoProcessQueue: false,
+                uploadMultiple: true,
+                parallelUploads: 10,
+                maxFilesize: 10, // MB
+                maxFiles: 10,
+                acceptedFiles: "image/jpeg,image/png,image/gif,image/webp",
+                addRemoveLinks: true
+            });
+
+            imageDropzoneElem.disable = function() {
+                this.enabled = false;
+                this.element.classList.add('dz-disabled');
+            };
+
+            imageDropzoneElem.enable = function() {
+                this.enabled = true;
+                this.element.classList.remove('dz-disabled');
+            };
+
+            $(".btn").mouseleave(function () {
+                $(this).blur();
+            });
+
+            $("#clear-button").click(() => imageDropzoneElem.removeAllFiles(true));
+
+            $("#image-upload-form").on("submit",
+                function (event) {
+                    event.preventDefault();
+                    $(this).find(":input").prop("disabled", true);
+                    imageDropzoneElem.disable();
+
+                    const formData = new FormData();
+
+                    const dropzoneFiles = imageDropzoneElem.getAcceptedFiles();
+                    dropzoneFiles.forEach((dropzoneFile) => formData.append("ImageFiles", dropzoneFile));
+
+                    fetch("/CharacterVersion/@Model.CharacterVersionId/AddImages",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    )
+                    .then(response => {
+                        $(this).find(":input").prop("disabled", false);
+                        imageDropzoneElem.enable();
+
+                        if (response.redirected) {
+                            window.location.replace(response.url);
+                        }
+
+                        return response.text();
+                    })
+                    .then(html => $("main").html(html));
+                }
+            )
+        }
+
+        $(window).on("load", pageReady);
+    </script>
+}

@@ -17,5 +17,7 @@ namespace AnimeQuiz.Interfaces
         Task<ServiceResponse> AddVoiceActorsToCharacterVersion(int id, AddVoiceActorsToCharacterVersionRequest request);
 
         Task<ServiceResponse> RemoveVoiceActorsFromCharacterVersion(int id, RemoveVoiceActorsFromCharacterVersionRequest request);
+
+        Task<IEnumerable<StaffDto>> FindAvailableVoiceActorsForCharacter(int id);
     }
 }

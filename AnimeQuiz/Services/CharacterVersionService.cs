@@ -390,5 +390,18 @@ namespace AnimeQuiz.Services
             response.Messages.Add($"{affectedRecordsNumber} records are affected.");
             return response;
         }
+
+        public async Task<IEnumerable<StaffDto>> FindAvailableVoiceActorsForCharacter(int id)
+        {
+            // Filter available voice actors if this character don't have such voice actor
+            List<Staff> staffs = await _context.Staffs
+                .Include(s => s.VoiceActedCharacterVersions)
+                .Where(s => !s.VoiceActedCharacterVersions!.Any(vacv => vacv.CharacterVersionId == id))
+                .ToListAsync();
+
+            // Convert to Dtos
+            IEnumerable<StaffDto> staffDtos = staffs.Select(StaffService.ToStaffDto);
+            return staffDtos;
+        }
     }
 }
