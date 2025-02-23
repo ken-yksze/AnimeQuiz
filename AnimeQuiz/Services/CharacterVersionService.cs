@@ -53,11 +53,26 @@ namespace AnimeQuiz.Services
         {
             // Get a CharacterVersions
             CharacterVersion? characterVersion = await _context.CharacterVersions
-                .Include(cv => cv.Character)
-                .Include(cv => cv.Images)
-                .Include(cv => cv.Animes)
-                    !.ThenInclude(a => a.Images)
-                .Include(cv => cv.VoiceActors)
+                .Select(cv => new CharacterVersion
+                {
+                    CharacterVersionId = cv.CharacterVersionId,
+                    VersionName = cv.VersionName,
+                    CharacterId = cv.CharacterId,
+                    Character = cv.Character,
+                    Images = cv.Images,
+                    VoiceActors = cv.VoiceActors,
+                    Animes = cv.Animes
+                        !.Select(a => new Anime
+                        {
+                            AnimeId = a.AnimeId,
+                            AnimeName = a.AnimeName,
+                            Images = a.Images
+                                !.OrderBy(i => i.ImageId)
+                                .Take(1)
+                                .ToList()
+                        })
+                        .ToList()
+                })
                 .SingleOrDefaultAsync(c => c.CharacterVersionId == id);
 
             // Convert to Dto
